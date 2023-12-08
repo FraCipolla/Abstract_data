@@ -143,7 +143,8 @@ namespace ft
         virtual ~random_access_iterator() {}
 
         //overload operator
-        random_access_iterator operator*() { return *(this->ptr_); }
+        reference operator*() { return *(this->ptr_); }
+        pointer operator() { return this->ptr_; }
         bool operator==(random_access_iterator const & rhs) { return this->ptr_ == rhs.ptr_; }
         bool operator!=(random_access_iterator const & rhs) { return this->ptr_ != rhs.ptr_; }
         random_access_iterator& operator++() { return *(++this->ptr_); }
@@ -154,14 +155,22 @@ namespace ft
         random_access_iterator operator+(difference_type n) const { return this->ptr_ + n; }
         random_access_iterator operator+=(difference_type n) { this->ptr_ += n; return *this; }
         random_access_iterator operator-=(difference_type n) { thist->ptr -= n; return *this; }
-        random_access_iterator operator[](int pos) { return (this->ptr_ + pos); }
-        friend random_access_iterator operator>(const random_access_iterator & lhs, const random_access_iterator & rhs);
-        friend random_access_iterator operator>=(const random_access_iterator & lhs, const random_access_iterator & rhs);
-        friend random_access_iterator operator<(const random_access_iterator & lhs, const random_access_iterator & rhs);
-        friend random_access_iterator operator<=(const random_access_iterator & lhs, const random_access_iterator & rhs);
+        random_access_iterator operator[](int pos) { return (this->ptr_ + pos); } // ???????????????????????????? non sicuro
+
+        // definire fuori dalla classe
+        friend bool operator>(const random_access_iterator & lhs, const random_access_iterator & rhs);
+        friend bool operator>=(const random_access_iterator & lhs, const random_access_iterator & rhs);
+        friend bool operator<(const random_access_iterator & lhs, const random_access_iterator & rhs);
+        friend bool operator<=(const random_access_iterator & lhs, const random_access_iterator & rhs);
 
 
         private:
         pointer ptr_;
     }; // class random_access_iterator
 }; // namespace ft
+
+// prova senza definire il tipo di iteratore
+template<class Itlhs, class Itrhs>
+bool operator>(Itlhs & lhs, Itrhs & rhs) {
+    lhs() > rhs() ? true : false;
+}
