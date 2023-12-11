@@ -1,5 +1,7 @@
 #pragma once
 
+#include "utility.hpp"
+
 namespace ft
 {
 template< class Iter >
@@ -19,7 +21,7 @@ struct iterator_traits<T*>
     typedef T                                   value_type;
     typedef T*                                  pointer;
     typedef T&                                  reference;
-    typedef ft::random_access_iterator_tag      iterator_category;
+    typedef ft::random_access_iterator_tag          iterator_category;
 }; // iterator_traits<T *>
 
 template< class T >
