@@ -23,7 +23,7 @@ class list
 	typedef ft::reverse_iterator<iterator>					reverse_iterator;
 	typedef ft::reverse_iterator<const_iterator>			const_reverse_iterator;
 	
-	// member functions
+		
 	explicit list(const allocator_type& alloc = allocator_type()) : alloc_(alloc), start_(NULL), end_(NULL), capacity_(NULL) {}
 	explicit list(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) : alloc_(alloc), start_(NULL), end_(NULL), capacity_(NULL) {
 		if (n >= 0 && n < this->max_size()) {
@@ -132,49 +132,158 @@ class list
 			}
 			this->alloc_.construct(this->start_ + pos, value);
 		}
-	return pos;
+		return pos;
 	}
 
 	iterator insert( const_iterator pos, size_type count, const T& value ) {
-
+		if (this->capacity_ - (this->end_) < count) {
+			pointer newStart = this->alloc_.allocate(this->size() + count);
+			pointer newEnd = newStart;
+			while (newEnd != pos) {
+				this->alloc_.construct(newEnd++, (*this->start_)++);
+			}
+			while (count--)
+				this->alloc_.construct(newEnd++, value);
+			while (this->start_ != this->end_) {
+				this->alloc_.construct(newEnd++, (*this->start_)++);
+			}
+			this->clear();
+			this->start_ = newStart;
+			this->end_ = newEnd;
+			this->capacity_ = this->end_;
+		} else {
+			this->end_+= count;
+			pointer end_cpy = this->end_;
+			pointer offset = this->start_ + pos + count;
+			while (--end_cpy != offset) {
+				this->alloc_.construct(end_cpy, *end_cpy - 1);
+			}
+			while (count--)
+				this->alloc_.construct(this->start_ + pos + value, value);
+		}
+		return pos;
 	}
 
 	template< class InputIt >
 	iterator insert( const_iterator pos, InputIt first, InputIt last ) {
+		std::size_t size = (last - first)
+		if (this->capacity_ - (this->end_) < size) {
+			pointer newStart = this->alloc_.allocate(this->size() + size);
+			pointer newEnd = newStart;
+			while (newEnd != pos) {
+				this->alloc_.construct(newEnd++, (*this->start_)++);
+			}
+			while (first != last)
+				this->alloc_.construct(newEnd++, *first++);
+			while (this->start_ != this->end_) {
+				this->alloc_.construct(newEnd++, (*this->start_)++);
+			}
+			this->clear();
+			this->start_ = newStart;
+			this->end_ = newEnd;
+			this->capacity_ = this->end_;
+		} else {
+			this->end_+= size;
+			pointer end_cpy = this->end_;
+			pointer offset = this->start_ + pos + size;
+			while (--end_cpy != offset) {
+				this->alloc_.construct(end_cpy, *end_cpy - 1);
+			}
+			for (int i = 0; first != last; i++, first++)
+				this->alloc_.construct(this->start_ + pos + i, *first);
+		}
+		return pos;
+	}
+
+	iterator erase( iterator pos ) {
 
 	}
 
-	template <class InputIterator>
-	void assign(InputIterator first, InputIterator last) {
-		if (!ft::is_ft_iterator_tagged<typename ft::iterator_traits<InputIterator>::iterator_category>::value)
-			return ;
-		this->clear();
-		size_type capacity = this->capacity_ - this->start_;
-		difference_type n = ft::distance(first, last);
-		if (n > capacity) {
-			this->start_ = alloc_.allocate(n);
-			this->capacity_ = this->start_ + n;
-			this->end_ = this->start_;
-		}
-		while (n--) {
-			alloc_.construct(this->end_++, *first++);
-		}
+	iterator erase( iterator first, iterator last ) {
+
+	}
+
+	void push_back( const T& value ) {
+
+	}
+
+	void pop_back() {
+
 	}
 	
-	void assign(size_type n, const value_type& val) {
-		this->clear();
-		size_type capacity = this->capacity_ - this->start_;
-		if (n > this->capacity_) {
-			this->alloc_.deallocate(start_, capacity);
-			this->start_ = alloc_.allocate(n);
-			this->capacity_ = this->start_ + n;
-		}
-		this->end_ = this->start_;
-		while (n--)
-			this->alloc_.construct(this->end++, val);
+	void push_front( const T& value ) {
+
 	}
 
+	void pop_front() {
+
+	}
+
+	void resize( size_type count ) {
+
+	}
+
+	void resize( size_type count, const value_type& value ) {
+
+	}
 	
+	void swap( list& other ) {
+
+	}
+
+	// Operations
+
+	void merge( list& other ) {
+
+	}
+
+	template< class Compare >
+	void merge( list& other, Compare comp ) {
+
+	}
+
+	void splice( const_iterator pos, list& other ) {
+
+	}
+
+	void splice( const_iterator pos, list& other, const_iterator it ) {
+
+	}
+
+	void splice( const_iterator pos, list& other, const_iterator first, const_iterator last) {
+
+	}
+
+	void remove( const T& value ) {
+
+	}
+
+	template< class UnaryPredicate >
+	void remove_if( UnaryPredicate p ) {
+
+	}
+
+	void reverse() {
+
+	}
+
+	void reverse() {
+
+	}
+
+	template< class BinaryPredicate >
+	void unique( BinaryPredicate p ) {
+
+	}
+
+	void sort() {
+
+	}
+
+	template< class Compare >
+	void sort( Compare comp ) {
+
+	}
 
 	private:
 	allocator_type	alloc_;
@@ -182,4 +291,29 @@ class list
 	pointer		end_;
 	pointer		capacity_;
 }; // class list
+// Non-member functions
+template< class T, class Alloc >
+bool operator==( const std::list<T, Alloc>& lhs, const std::list<T, Alloc>& rhs )
+{ return (lhs.size() == rhs.size()) && ft::equal(lhs.begin(), lhs.end(), rhs.begin()); }
+
+template< class T, class Alloc >
+bool operator!=( const std::list<T, Alloc>& lhs, const std::list<T, Alloc>& rhs )
+{ return !(lhs == rhs); }
+
+template< class T, class Alloc >
+bool operator<( const std::list<T, Alloc>& lhs, const std::list<T, Alloc>& rhs )
+{ return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()); }
+
+template< class T, class Alloc >
+bool operator<=( const std::list<T, Alloc>& lhs, const std::list<T, Alloc>& rhs )
+{ return !(rhs < lhs); }
+
+template< class T, class Alloc >
+bool operator>( const std::list<T, Alloc>& lhs, const std::list<T, Alloc>& rhs )
+{ return rhs < lhs; }
+
+template< class T, class Alloc >
+bool operator>=( const std::list<T, Alloc>& lhs, const std::list<T, Alloc>& rhs )
+{ return !(lhs < rhs); }
+
 }; //namespace ft
